@@ -62,13 +62,13 @@ Siamese networks were first proposed as an architecture for efficient face verif
 
 In the image field, the siamese networks consist of convolutional kernels. These are great for encoding the information that the network needs to decide whether two face images are of the same person. However, in our case, we have a more suitable tool called LSTM cell, which is great at encoding sequences, in our case questions. We implemented a variation  of the siamese architecture proposed by Thyagarajan et al. [3]. We avoided using the Manhattan distance of the question encodings and instead added dense layers that input these encodings. Our hypothesis is that the dense layers will learn the most appropriate distance function.
 
-![Missing LSTM arch image](storage/datasets/q2b/plots/lstm_dense_archtecture.png "Siamese LSTM Architecture")
+![Missing LSTM arch image](img/lstm_dense_archtecture.png "Siamese LSTM Architecture")
 
 *The model is defined on `SiameseLSTM/SiamLSTM.py`*
 
 Concerning the word embeddings, we used the pretrained Google news embeddings. We believe that training our own embeddings from scratch or even fine-tuning the pretrained ones would be overambitious given the limited time and hardware we had.
 
-![Missing LSTM arch image](storage/datasets/q2b/plots/lstm_dense_curves_500.png "Siamese LSTM training curves")
+![Missing LSTM arch image](img/lstm_dense_curves_500.png "Siamese LSTM training curves")
 
 We trained the network with a batch size of 1,024, using the Adam optimizer with a learning rate of 0.001. We appropriately used dropout and regularization on both the LSTM and the dense layers to avoid overfitting. The training took 5 hours on an Nvidia 2060 Super (8GB). In the figure, we can see that even with the usage and tuning of dropout and regularization we were not able to successfully combat overfitting. We believe that further tuning would be able to alleviate the issue.
 
@@ -78,12 +78,12 @@ Furthermore, we can see that even the overfitted network was able to achieve a v
 
 As a final model, we wanted to both combine the question encodings created by the siamese LSTM and the engineered features we created in the first part of this task. We believe that adding these hand-crafted features would help the network to better understand our objective of finding duplicate questions.
 
-![Missing LSTM arch image with features](storage/datasets/q2b/plots/lstm_dense_feat_arch.png "Siamese LSTM Architecture with injected features")
+![Missing LSTM arch image with features](img/lstm_dense_feat_arch.png "Siamese LSTM Architecture with injected features")
 *The model is defined on `SiameseLSTM/SiamLSTMwithFeatures.py`*
 
 In the above figure, we present the way we "inject" the new features into the duplicate classification decision. We avoid immediately concatenating them next to the LSTM encodings, and we first transform them using a dense layer. The main reason is to avoid scaling issues. For example, the LSTM encodings may have large values while the engineered features (which are first normalized) will have small values around 0. The added dense layer will be able to learn an appropriate re-scaling so as the engineered features will have a chance at being a part of the final decision. We hypothesize that this dense layer may also be replaced by a batch normalization layer, though we did not test this hypothesis.
 
-![Missing LSTM arch image with features](storage/datasets/q2b/plots/lstm_dense_features_curves_500.png "Siamese LSTM with engineered features training curves")
+![Missing LSTM arch image with features](img/lstm_dense_features_curves_500.png "Siamese LSTM with engineered features training curves")
 
 From the learning curves, we have two main takeaways. First, the validation set accuracy increased from **0.80 to 0.83**. Second, while the overfitting observed before persists, it occurs much later in the training. We must note that the regularization, dropout and learning rate hyperparameters were the same in both runs. This suggests that the added features had an additional regulatory effect.
 
