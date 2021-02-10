@@ -62,7 +62,7 @@ Siamese networks were first proposed as an architecture for efficient face verif
 
 In the image field, the siamese networks consist of convolutional kernels. These are great for encoding the information that the network needs to decide whether two face images are of the same person. However, in our case, we have a more suitable tool called LSTM cell, which is great at encoding sequences, in our case questions. We implemented a variation  of the siamese architecture proposed by Thyagarajan et al. [3]. We avoided using the Manhattan distance of the question encodings and instead added dense layers that input these encodings. Our hypothesis is that the dense layers will learn the most appropriate distance function.
 
-![Missing LSTM arch image](img/lstm_dense_archtecture.png "Siamese LSTM Architecture")
+![Missing LSTM arch image](img/lstm_dense_archtecture.PNG "Siamese LSTM Architecture")
 
 *The model is defined on `SiameseLSTM/SiamLSTM.py`*
 
@@ -78,7 +78,7 @@ Furthermore, we can see that even the overfitted network was able to achieve a v
 
 As a final model, we wanted to both combine the question encodings created by the siamese LSTM and the engineered features we created in the first part of this task. We believe that adding these hand-crafted features would help the network to better understand our objective of finding duplicate questions.
 
-![Missing LSTM arch image with features](img/lstm_dense_feat_arch.png "Siamese LSTM Architecture with injected features")
+![Missing LSTM arch image with features](img/lstm_dense_feat_arch.PNG "Siamese LSTM Architecture with injected features")
 *The model is defined on `SiameseLSTM/SiamLSTMwithFeatures.py`*
 
 In the above figure, we present the way we "inject" the new features into the duplicate classification decision. We avoid immediately concatenating them next to the LSTM encodings, and we first transform them using a dense layer. The main reason is to avoid scaling issues. For example, the LSTM encodings may have large values while the engineered features (which are first normalized) will have small values around 0. The added dense layer will be able to learn an appropriate re-scaling so as the engineered features will have a chance at being a part of the final decision. We hypothesize that this dense layer may also be replaced by a batch normalization layer, though we did not test this hypothesis.
